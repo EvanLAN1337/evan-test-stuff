@@ -3,35 +3,47 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EVAN'S STUFF</title>
-  <meta name="description" content="Small games, toys and experiments by Evan. Free to play in your browser.">
-  <meta name="theme-color" content="#07070d">
-  <meta property="og:title" content="EVAN'S STUFF">
-  <meta property="og:description" content="Small games, toys and experiments. Free to play in your browser.">
+  <title>Lanworks</title>
+  <meta name="description" content="Lanworks: free web tools, apps and games by Evan. They run in your browser, with no installs and no accounts.">
+  <meta name="theme-color" content="#fafaf9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0e0e10" media="(prefers-color-scheme: dark)">
+  <meta property="og:title" content="Lanworks">
+  <meta property="og:description" content="Free web tools, apps and games. No installs, no accounts.">
   <meta property="og:type" content="website">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="assets/css/tokens.css">
   <link rel="stylesheet" href="assets/css/site.css">
   <script src="assets/js/catalog.js" defer></script>
   <script src="assets/js/site.js" defer></script>
 </head>
 <body>
-  <div class="bg" aria-hidden="true"><div class="floor"></div></div>
-
-  <header class="site-header">
-    <a class="logo" href="./">EVAN'S <span>STUFF</span></a>
-    <nav class="nav" id="nav"><a href="#about">About</a></nav>
+  <header class="site-header" id="top">
+    <div class="wrap">
+      <a class="logo" href="./" aria-label="Lanworks home">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><path d="M8 6.5v11h8" fill="none" stroke="var(--bg)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="8.5" r="2" fill="var(--accent)"/></svg>
+        Lanworks
+      </a>
+      <nav class="nav" id="nav"><a href="#about">About</a></nav>
+    </div>
   </header>
 
-  <main>
+  <main class="wrap">
     <section class="hero">
-      <p class="eyebrow">Insert coin &#9656;</p>
-      <h1>EVAN'S<br><span>STUFF</span></h1>
-      <p class="tagline">Small games, toys and experiments. No installs, no accounts &mdash; just click and play.</p>
-      <a class="btn" href="#games">Play something</a>
+      <p class="eyebrow">Tools, apps &amp; games by Evan</p>
+      <h1>Useful tools and fun projects, <em>right in your browser.</em></h1>
+      <p class="tagline">A growing collection of small web apps. Nothing to install, no account needed, and your data stays on your device.</p>
+      <div class="actions" id="hero-actions">
+        <a class="btn btn-primary" href="#tools">Browse tools</a>
+        <a class="btn" href="#games">Play games</a>
+      </div>
+      <ul class="facts">
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>Private by default</li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 1.5 3.5 9H8l-1 5.5L12.5 7H8z" stroke-linejoin="round"/></svg>Fast and lightweight</li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M5.5 8.2 7.2 10l3.3-3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Free, with no sign-up</li>
+      </ul>
     </section>
 
     <div id="catalog">
@@ -42,10 +54,22 @@
 
     <section class="about" id="about">
       <h2>About</h2>
-      <p>This is my corner of the internet. Everything here runs right in your browser and is built with plain HTML, CSS and JavaScript. New games and features get added over time &mdash; check back.</p>
+      <div>
+        <p>Lanworks is where I put the things I build: practical tools, small apps and the occasional game. Each one is built with plain HTML, CSS and JavaScript and runs entirely in your browser. I add new projects over time.</p>
+        <ul class="principles">
+          <li><b>No accounts</b><span>Open a link and start. There's nothing to sign up for.</span></li>
+          <li><b>Local first</b><span>Your work stays on your device unless you save or share it yourself.</span></li>
+          <li><b>Open source</b><span>The source for every project is public on GitHub.</span></li>
+        </ul>
+      </div>
     </section>
   </main>
 
-  <footer class="site-footer">&copy; <span id="year">2026</span> Evan &middot; EVAN'S STUFF</footer>
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>&copy; <span id="year">2026</span> Evan &middot; Lanworks</span>
+      <a href="https://github.com/EvanLAN1337/evan-test-stuff">Source on GitHub</a>
+    </div>
+  </footer>
 </body>
 </html>

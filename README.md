@@ -1,13 +1,14 @@
-# EVAN'S STUFF
+# Lanworks
 
-A static website: a landing page (hub) that links to small browser games and features.
+A static website: a landing page (hub) that links to browser tools, apps and games.
 No build step, no dependencies, no database. Plain HTML, CSS and JavaScript (ES modules).
 
 ```
 index.html                 the hub / landing page
-assets/css/tokens.css      shared colours + fonts (used by the hub AND every game)
+assets/css/tokens.css      hub colours + fonts (light, auto dark mode); use for tool pages too
+assets/css/game.css        dark palette + same fonts, for game pages
 assets/css/site.css        hub styles
-assets/js/catalog.js       ← list of games/features shown on the hub (edit this to add cards)
+assets/js/catalog.js       ← list of tools/apps/games shown on the hub (edit this to add cards)
 assets/js/site.js          renders the hub from catalog.js
 games/powder/              Powder Lab (falling-sand sandbox)
 404.html                   "page not found"

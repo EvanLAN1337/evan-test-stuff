@@ -17,9 +17,9 @@ button, input, select { font: inherit; color: inherit; }
 .topbar { display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; padding: 8px 12px;
   background: var(--bg-2); border-bottom: 1px solid var(--line); }
 .home { color: var(--muted); text-decoration: none; font-size: 13px; white-space: nowrap; }
-.home b { font: 400 13px var(--font-display); color: var(--neon-1); }
+.home b { font: 600 13.5px var(--font-display); color: var(--text); }
 .home:hover b { text-shadow: 0 0 10px rgba(62, 240, 255, .6); }
-.title { margin: 0; font: 400 18px var(--font-display); color: var(--warn); text-shadow: 0 0 12px rgba(255, 177, 62, .4); }
+.title { margin: 0; font: 650 17px var(--font-display); letter-spacing: -.01em; color: var(--warn); }
 .controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-left: auto; }
 
 .tb { min-height: 32px; padding: 5px 11px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; cursor: pointer; }
@@ -87,7 +87,7 @@ button, input, select { font: inherit; color: inherit; }
 .dlg::backdrop { background: rgba(3, 3, 8, .7); }
 .dlg-head, .dlg-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 16px; }
 .dlg-head { border-bottom: 1px solid var(--line); }
-.dlg-head h2 { margin: 0; font: 400 18px var(--font-display); color: var(--neon-1); }
+.dlg-head h2 { margin: 0; font: 650 17px var(--font-display); color: var(--neon-1); }
 .dlg-foot { border-top: 1px solid var(--line); }
 .dlg-body { padding: 4px 16px; }
 .dlg fieldset { margin: 10px 0; padding: 0; border: 0; }

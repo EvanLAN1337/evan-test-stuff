@@ -1,24 +1,57 @@
-/* Shared design tokens for the whole site (hub + every game). */
+/* Shared design tokens for the hub and any light-themed tool page.
+   Game pages use game.css instead (dark palette, same fonts). */
 :root {
-  color-scheme: dark;
+  color-scheme: light dark;
 
-  --bg: #07070d;
-  --bg-2: #0c0c17;
-  --surface: #13131f;
-  --surface-2: #1b1b2c;
-  --line: #2a2a44;
-  --text: #ececf7;
-  --muted: #9b9bbb;
+  --bg: #fafaf9;
+  --bg-2: #f3f3f1;
+  --surface: #ffffff;
+  --line: #e6e5e1;
+  --line-strong: #d4d3ce;
+  --text: #17171a;
+  --muted: #6b6b73;
+  --faint: #9a9aa2;
 
-  --neon-1: #3ef0ff; /* cyan */
-  --neon-2: #ff3ec8; /* magenta */
-  --neon-3: #b6ff3e; /* lime */
-  --warn: #ffb13e;   /* amber */
+  --accent: #3355ff;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(51, 85, 255, .09);
+  --ok: #16a34a;
+  --ok-soft: rgba(22, 163, 74, .1);
+  --warn: #c2700c;
+  --warn-soft: rgba(194, 112, 12, .1);
 
-  --radius: 14px;
-  --font-display: "Bungee", "Segoe UI Black", Impact, system-ui, sans-serif;
-  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --shadow-sm: 0 1px 2px rgba(20, 20, 30, .05);
+  --shadow-lg: 0 1px 2px rgba(20, 20, 30, .04), 0 12px 32px -12px rgba(20, 20, 30, .16);
+
+  --radius: 12px;
+  --radius-sm: 8px;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-body);
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e0e10;
+    --bg-2: #141417;
+    --surface: #17171b;
+    --line: #26262c;
+    --line-strong: #34343b;
+    --text: #ededf0;
+    --muted: #9d9da6;
+    --faint: #6c6c75;
+
+    --accent: #7b93ff;
+    --accent-ink: #0e0e10;
+    --accent-soft: rgba(123, 147, 255, .12);
+    --ok: #4ade80;
+    --ok-soft: rgba(74, 222, 128, .12);
+    --warn: #f0a548;
+    --warn-soft: rgba(240, 165, 72, .12);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3);
+    --shadow-lg: 0 1px 2px rgba(0, 0, 0, .3), 0 16px 40px -16px rgba(0, 0, 0, .6);
+  }
 }
 
 [hidden] { display: none !important; }
