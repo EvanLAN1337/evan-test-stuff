@@ -12,7 +12,7 @@ const undoBtn = document.getElementById('btn-undo');
 let puzzle = null;
 let rects = [];   // placed plots: { r, c, h, w }
 let history = [];
-let drag = null;  // { a: [r, c], b: [r, c], id }
+let drag = null;  // { a: [r, c], b: [r, c], box: plot covering every cell dragged over, id }
 
 const el = (tag, attrs = {}, text) => {
   const node = document.createElementNS(SVG, tag);
@@ -48,6 +48,8 @@ const overlaps = (a, b) => a.r < b.r + b.h && b.r < a.r + a.h && a.c < b.c + b.w
 const span = ([r1, c1], [r2, c2]) => ({
   r: Math.min(r1, r2), c: Math.min(c1, c2), h: Math.abs(r1 - r2) + 1, w: Math.abs(c1 - c2) + 1,
 });
+// Grow a plot just enough to take in cell [r, c].
+const grow = (x, [r, c]) => span([Math.min(x.r, r), Math.min(x.c, c)], [Math.max(x.r + x.h - 1, r), Math.max(x.c + x.w - 1, c)]);
 
 // The clue a plot belongs to, or -1 if it holds no clue / several clues / doesn't match.
 function matchOf(x) {
@@ -109,7 +111,7 @@ function render() {
   }
 
   if (drag) {
-    const x = span(drag.a, drag.b);
+    const x = drag.box;
     const m = matchOf(x);
     const g = plot(x, 'preview', m.ok ? puzzle.colours[m.clue] : '#9b9bbb');
     g.append(el('text', {
@@ -143,7 +145,7 @@ board.addEventListener('pointerdown', (e) => {
   if (!puzzle || shell.done || e.button > 0) return;
   board.setPointerCapture(e.pointerId);
   const at = cellAt(e);
-  drag = { a: at, b: at, id: e.pointerId };
+  drag = { a: at, b: at, box: span(at, at), id: e.pointerId };
   render();
 });
 board.addEventListener('pointermove', (e) => {
@@ -151,17 +153,17 @@ board.addEventListener('pointermove', (e) => {
   const at = cellAt(e);
   if (at[0] === drag.b[0] && at[1] === drag.b[1]) return;
   drag.b = at;
+  drag.box = grow(drag.box, at);
   render();
 });
 const endDrag = (e) => {
   if (!drag || e.pointerId !== drag.id) return;
-  const { a, b } = drag;
+  const { a, box } = drag;
   drag = null;
   if (e.type === 'pointercancel') return render();
   const hit = rects.find((x) => inside(x, a[0], a[1]));
-  if (a[0] === b[0] && a[1] === b[1] && hit) return commit(rects.filter((x) => x !== hit));
-  const x = span(a, b);
-  commit([...rects.filter((y) => !overlaps(x, y)), x]);
+  if (box.h * box.w === 1 && hit) return commit(rects.filter((x) => x !== hit));
+  commit([...rects.filter((y) => !overlaps(box, y)), box]);
 };
 board.addEventListener('pointerup', endDrag);
 board.addEventListener('pointercancel', endDrag);

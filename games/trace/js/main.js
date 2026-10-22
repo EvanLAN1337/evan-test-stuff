@@ -18,6 +18,12 @@ let history = [];  // path before each stroke
 let dragId = null;
 let revealed = false;
 
+// The line on screen trails `path` a little so it glides into each new cell.
+let shown = [];   // the path as currently drawn
+let headAt = 0;   // how far along `shown` the line's head is, in cells (fractional mid-glide)
+let raf = 0, lastT = 0;
+const calm = matchMedia('(prefers-reduced-motion: reduce)');
+
 const el = (tag, attrs = {}, text) => {
   const node = document.createElementNS(SVG, tag);
   for (const k in attrs) node.setAttribute(k, attrs[k]);
@@ -26,15 +32,44 @@ const el = (tag, attrs = {}, text) => {
 };
 const centre = (x) => [(x % puzzle.n) * U + U / 2, Math.floor(x / puzzle.n) * U + U / 2];
 
+// Ask for a redraw; the line then eases toward `path` over the next few frames.
 function render() {
+  if (!raf) { lastT = performance.now(); raf = requestAnimationFrame(tick); }
+}
+
+function tick(t) {
+  raf = 0;
+  const dt = Math.min(50, t - lastT);
+  lastT = t;
+  let p = 0;
+  while (p < shown.length && p < path.length && shown[p] === path[p]) p++;
+  let target = path.length - 1;
+  if (!path.length) { shown = []; headAt = 0; target = 0; }
+  else if (p === 0) { shown = path.slice(); headAt = 0; }
+  else if (p < shown.length && headAt > p - 1) target = p - 1; // back up along the old line first
+  else shown = path.slice();
+
+  const d = target - headAt;
+  const eased = calm.matches ? d : d * (1 - Math.exp(-dt / 45));
+  const minStep = (dt / 1000) * 3; // never slower than 3 cells a second
+  headAt = Math.abs(d) <= minStep || Math.abs(eased) >= Math.abs(d) ? target : headAt + (Math.abs(eased) < minStep ? Math.sign(d) * minStep : eased);
+  draw();
+  if (headAt !== target || shown.length !== path.length) render();
+}
+
+function draw() {
   const { n, numAt } = puzzle;
   const solved = shell.done && !revealed;
   const colour = solved ? DONE : LINE;
   board.replaceChildren();
   board.setAttribute('viewBox', `0 0 ${n * U} ${n * U}`);
 
-  const filled = el('g', { fill: colour, 'fill-opacity': 0.09 });
-  for (const x of path) filled.append(el('rect', { x: (x % n) * U, y: Math.floor(x / n) * U, width: U, height: U }));
+  const i0 = Math.floor(headAt), f = headAt - i0;
+  const filled = el('g', { fill: colour });
+  shown.forEach((x, i) => {
+    if (i > i0 + 1 || (i === i0 + 1 && !f)) return;
+    filled.append(el('rect', { x: (x % n) * U, y: Math.floor(x / n) * U, width: U, height: U, 'fill-opacity': i > i0 ? 0.09 * f : 0.09 }));
+  });
   board.append(filled);
 
   const grid = el('g', { stroke: 'var(--line)', 'stroke-width': 2 });
@@ -44,9 +79,14 @@ function render() {
   }
   board.append(grid);
 
-  if (path.length > 1) {
+  const pts = shown.slice(0, i0 + 1).map(centre);
+  if (f && i0 + 1 < shown.length) {
+    const [ax, ay] = centre(shown[i0]), [bx, by] = centre(shown[i0 + 1]);
+    pts.push([ax + (bx - ax) * f, ay + (by - ay) * f]);
+  }
+  if (pts.length > 1) {
     board.append(el('polyline', {
-      points: path.map((x) => centre(x).join(',')).join(' '),
+      points: pts.map((q) => q.join(',')).join(' '),
       fill: 'none', stroke: colour, 'stroke-width': 34, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: 0.9,
     }));
   }
@@ -60,7 +100,7 @@ function render() {
   }
   board.append(wallG);
 
-  const onPath = new Set(path);
+  const onPath = new Set(shown.slice(0, i0 + 1));
   numAt.forEach((m, x) => {
     if (!m) return;
     const [cx, cy] = centre(x);
@@ -72,8 +112,8 @@ function render() {
     }, m));
   });
 
-  if (path.length && !shell.done) {
-    const [cx, cy] = centre(path[path.length - 1]);
+  if (pts.length && !shell.done) {
+    const [cx, cy] = pts[pts.length - 1];
     board.append(el('circle', { cx, cy, r: 12, fill: 'var(--bg)', stroke: colour, 'stroke-width': 5 }));
   }
   undoBtn.disabled = !history.length || shell.done;
@@ -218,6 +258,8 @@ const shell = initShell({
     history = [];
     dragId = null;
     revealed = false;
+    shown = [];
+    headAt = 0;
     render();
   },
 });

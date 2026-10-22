@@ -101,7 +101,7 @@ export function initShell({ id, start }) {
   help.addEventListener('close', resume);
   $('btn-help').addEventListener('click', openHelp);
   document.addEventListener('keydown', (e) => {
-    if (e.target.closest('input, textarea') || e.ctrlKey || e.metaKey || e.altKey || help.open) return;
+    if (e.target.closest?.('input, textarea') || e.ctrlKey || e.metaKey || e.altKey || help.open) return;
     if (e.key === 'n' || e.key === 'N') { e.preventDefault(); newPuzzle(); }
   });
   if (!load(`${id}:seen-help`, false)) { save(`${id}:seen-help`, true); openHelp(); }
