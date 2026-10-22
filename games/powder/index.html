@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Powder Lab - EVAN'S STUFF</title>
+  <meta name="description" content="Falling-sand physics sandbox with heat, air pressure, fire and electricity.">
+  <meta name="theme-color" content="#07070d">
+  <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&display=swap">
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+  <link rel="stylesheet" href="css/powder.css">
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="home" href="../../" title="Back to EVAN'S STUFF">&#9666; <b>EVAN'S STUFF</b></a>
+    <h1 class="title">Powder Lab</h1>
+    <div class="controls">
+      <button type="button" id="btn-play" class="tb" title="Pause (Space)">&#10074;&#10074;</button>
+      <button type="button" id="btn-step" class="tb" title="Step one frame (F)">&#9655;|</button>
+      <div class="seg" role="group" aria-label="View">
+        <button type="button" data-view="normal" title="Normal view (1)">Normal</button>
+        <button type="button" data-view="heat" title="Temperature view (2)">Heat</button>
+        <button type="button" data-view="air" title="Air pressure view (3)">Air</button>
+      </div>
+      <label class="brush" title="Brush size ([ / ] or mouse wheel)">Brush
+        <input id="brush" type="range" min="0" max="30" value="3"><output id="brush-val">3</output>
+      </label>
+      <button type="button" id="btn-clear" class="tb" title="Clear everything">Clear</button>
+      <button type="button" id="btn-save" class="tb" title="Save scene to a file (Ctrl+S)">Save</button>
+      <button type="button" id="btn-load" class="tb" title="Load a scene file (Ctrl+O)">Load</button>
+      <input id="file" type="file" accept=".powder" hidden>
+      <button type="button" id="btn-settings" class="tb" title="Settings &amp; controls" aria-label="Settings">&#9881;</button>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <main class="stage" id="stage">
+      <canvas id="canvas" aria-label="Simulation canvas"></canvas>
+      <div id="cursor" class="cursor" hidden></div>
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+      <noscript><p class="noscript">Powder Lab needs JavaScript.</p></noscript>
+    </main>
+
+    <aside class="palette" id="palette" aria-label="Elements">
+      <div class="palette-head"><input type="search" placeholder="Search elements..." aria-label="Search elements"></div>
+      <nav class="cat-tabs" role="tablist"></nav>
+      <div class="items"></div>
+      <p class="item-desc"></p>
+    </aside>
+  </div>
+
+  <footer class="statusbar">
+    <span id="hover">&mdash;</span>
+    <span id="selected"></span>
+    <span id="fps"></span>
+  </footer>
+
+  <dialog id="settings" class="dlg">
+    <form method="dialog">
+      <header class="dlg-head">
+        <h2>Settings</h2>
+        <button class="tb" value="close" aria-label="Close">&#10005;</button>
+      </header>
+      <div id="settings-body" class="dlg-body"></div>
+      <section class="help">
+        <h3>Controls</h3>
+        <ul>
+          <li><kbd>Left</kbd> draw selected &middot; <kbd>Right</kbd> erase (right-click an element to put it on the right button)</li>
+          <li><kbd>Middle</kbd> pick element &middot; <kbd>Wheel</kbd> / <kbd>[</kbd> <kbd>]</kbd> brush size</li>
+          <li><kbd>Space</kbd> pause &middot; <kbd>F</kbd> step &middot; <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> views &middot; <kbd>E</kbd> eraser</li>
+          <li><kbd>Ctrl+S</kbd> save &middot; <kbd>Ctrl+O</kbd> load &middot; or drop a .powder file on the canvas</li>
+        </ul>
+      </section>
+      <footer class="dlg-foot">
+        <button type="button" class="tb" id="settings-reset">Reset to defaults</button>
+        <button class="tb primary" value="close">Done</button>
+      </footer>
+    </form>
+  </dialog>
+</body>
+</html>

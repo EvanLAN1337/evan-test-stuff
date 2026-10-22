@@ -1,0 +1,24 @@
+/* Shared design tokens for the whole site (hub + every game). */
+:root {
+  color-scheme: dark;
+
+  --bg: #07070d;
+  --bg-2: #0c0c17;
+  --surface: #13131f;
+  --surface-2: #1b1b2c;
+  --line: #2a2a44;
+  --text: #ececf7;
+  --muted: #9b9bbb;
+
+  --neon-1: #3ef0ff; /* cyan */
+  --neon-2: #ff3ec8; /* magenta */
+  --neon-3: #b6ff3e; /* lime */
+  --warn: #ffb13e;   /* amber */
+
+  --radius: 14px;
+  --font-display: "Bungee", "Segoe UI Black", Impact, system-ui, sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+
+[hidden] { display: none !important; }
