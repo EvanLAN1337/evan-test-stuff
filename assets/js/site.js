@@ -17,7 +17,7 @@
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
   ));
   const BADGES = { new: 'New', live: 'Live', beta: 'Beta', soon: 'Coming soon' };
-  const ARROW = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const ARROW = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const initials = (t) => String(t).split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
 
   function card(it, sec) {
