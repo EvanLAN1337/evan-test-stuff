@@ -8,6 +8,7 @@ import { Settings, GRID_SIZES, buildSettingsPanel } from './ui/settings.js';
 import { buildPalette } from './ui/palette.js';
 import { Input } from './ui/input.js';
 import { TOOLS } from './content/tools.js';
+import { SCENES } from './content/scenes.js';
 import { serialize, deserialize, applySave } from './io/save.js';
 
 build();
@@ -183,8 +184,8 @@ function updateHover() {
 function setPaused(p) {
   app.paused = p;
   const b = $('btn-play');
-  b.textContent = p ? '▶' : '❚❚';
   b.title = p ? 'Play (Space)' : 'Pause (Space)';
+  b.setAttribute('aria-label', p ? 'Play' : 'Pause');
   b.classList.toggle('on', p);
 }
 function setView(v) {
@@ -231,6 +232,41 @@ $('file').addEventListener('change', (e) => { const f = e.target.files[0]; if (f
 stage.addEventListener('dragover', (e) => e.preventDefault());
 stage.addEventListener('drop', (e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) load(f); });
 
+// ---------- experiments ----------
+const lab = $('experiments');
+$('experiment-list').innerHTML = SCENES.map((sc) =>
+  `<button type="button" class="exp" data-scene="${sc.id}"><span class="exp-ic" aria-hidden="true">${sc.icon}</span>`
+  + `<span><b>${sc.name}</b><small>${sc.desc}</small></span></button>`
+).join('');
+function loadScene(scene) {
+  sim.clear();
+  const W = sim.w, H = sim.h;
+  const put = (x, y, id) => { if (x >= 0 && y >= 0 && x < W && y < H) sim.spawn(y * W + x, ids[id]); };
+  const p = {
+    W, H,
+    rect(x0, y0, x1, y1, id) { for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) put(x, y, id); },
+    box(x0, y0, x1, y1, id, t = 1) {
+      p.rect(x0, y0, x0 + t - 1, y1, id);
+      p.rect(x1 - t + 1, y0, x1, y1, id);
+      p.rect(x0, y1 - t + 1, x1, y1, id);
+    },
+    disc(cx, cy, r, id) {
+      for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) if (x * x + y * y <= r * r) put(cx + x, cy + y, id);
+    },
+  };
+  scene.build(p);
+  setPaused(false);
+  toast(`${scene.icon} ${scene.name}`);
+}
+$('btn-lab').addEventListener('click', () => lab.showModal());
+lab.addEventListener('click', (e) => {
+  if (e.target === lab) { lab.close(); return; }
+  const b = e.target.closest('[data-scene]');
+  if (!b) return;
+  lab.close();
+  loadScene(SCENES.find((sc) => sc.id === b.dataset.scene));
+});
+
 // ---------- settings ----------
 const dlg = $('settings');
 buildSettingsPanel($('settings-body'), settings);
@@ -248,7 +284,7 @@ settings.onChange((key, value) => {
 
 // ---------- keyboard ----------
 window.addEventListener('keydown', (e) => {
-  if (e.target.closest?.('input, select, textarea') || dlg.open) return;
+  if (e.target.closest?.('input, select, textarea') || dlg.open || lab.open) return;
   if (e.ctrlKey || e.metaKey) {
     if (e.key === 's') { e.preventDefault(); save(); }
     if (e.key === 'o') { e.preventDefault(); $('file').click(); }
@@ -287,7 +323,8 @@ function frame(now) {
   updateHover();
   frames++;
   if (now - fpsTime >= 500) {
-    $('fps').textContent = `${Math.round((frames * 1000) / (now - fpsTime))} fps · ${sim.w}×${sim.h}`;
+    const nc = sim.neutrons.count;
+    $('fps').textContent = `${nc ? `☢ ${nc} neutrons · ` : ''}${Math.round((frames * 1000) / (now - fpsTime))} fps · ${sim.w}×${sim.h}`;
     frames = 0;
     fpsTime = now;
   }

@@ -6,7 +6,7 @@ import { rnd } from '../../core/rng.js';
 export default [
   {
     id: 'water', name: 'Water', state: 'liquid', color: '#2f6fe4', variance: 10, density: 1000,
-    dispersion: 5, conductivity: 0.25, heatCapacity: 3,
+    dispersion: 5, conductivity: 0.25, heatCapacity: 3, neutron: { mode: 'moderate', chance: 0.25, absorb: 0.05 },
     transitions: [
       { below: 0, to: 'ice', chance: 0.01 },
       { above: 100, to: 'steam', chance: 0.05 },
@@ -16,6 +16,7 @@ export default [
   {
     id: 'saltwater', name: 'Salt Water', state: 'liquid', color: '#3e83c9', variance: 10, density: 1030,
     dispersion: 5, conductivity: 0.3, heatCapacity: 3, conductive: true,
+    neutron: { mode: 'moderate', chance: 0.25, absorb: 0.08 },
     transitions: [
       { below: -21, to: 'ice', chance: 0.01 },
       { above: 102, to: 'salt', chance: 0.01 },
@@ -77,6 +78,11 @@ export default [
       { above: 250, to: 'fire', chance: 0.05 },
     ],
     desc: 'Hardens back into wax as it cools.',
+  },
+  {
+    id: 'wet_concrete', name: 'Wet Concrete', state: 'liquid', color: ['#7c7c76', '#86867f'], density: 2400,
+    dispersion: 1, moveChance: 0.2, heatCapacity: 2, life: [300, 600], decayTo: 'concrete',
+    desc: 'Pour it, shape it, and it sets into concrete after a while.',
   },
   {
     id: 'nitro', name: 'Nitro', state: 'liquid', color: '#e6e08a', variance: 8, density: 1600,

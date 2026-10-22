@@ -62,7 +62,8 @@ Settings → Pages.
 # Powder Lab
 
 Falling-sand sandbox with temperature, heat conduction, phase changes, reactions, air pressure/wind,
-electricity, explosions, save/load and touch support.
+electricity, explosions, nuclear fission and fusion, chemistry, ready-made experiments, save/load and
+touch support.
 
 ```
 games/powder/js/
@@ -70,12 +71,14 @@ games/powder/js/
   core/registry.js           compiles element definitions into fast lookup tables
   core/sim.js                the simulation (movement, heat, reactions, electricity, explosions)
   core/air.js                coarse air pressure / velocity field
+  core/neutrons.js           free neutrons: a particle layer that flies over the grid
   render/renderer.js         normal / heat / air views
   ui/settings.js             settings schema (the settings panel is generated from it)
   ui/palette.js, ui/input.js palette + mouse/touch input
   io/save.js                 .powder save files
   content/categories.js      ← palette categories (tabs)
   content/tools.js           ← tools (eraser, heat, cool, wind, pick)
+  content/scenes.js          ← the Experiments menu (ready-made setups)
   content/elements/*.js      ← all elements, one file per category
 ```
 
@@ -113,6 +116,10 @@ is optional:
   flicker: true,             // re-randomise colour every step (fire-like)
 
   conductive: true,          // carries electricity
+  chargeColor: '#ff3f9a',    // colour it glows while current flows through it
+  radioactive: true,         // shows the ☢ badge in the palette
+  neutron: 'moderate',       // what a passing neutron does: 'absorb' | 'reflect' | 'moderate' | 'pass'
+                             //   or { mode, chance, absorb }; default: solids/powders/liquids absorb a few
   indestructible: true,      // explosions, void and acid can't touch it
   acidProof: true,
   paintChance: 0.6,          // fraction of brush cells filled
@@ -134,6 +141,9 @@ is optional:
   onPaint(sim, i) {          // custom brush behaviour. Return true if handled.
     return false;
   },
+  onNeutron(sim, i, slow) {  // custom neutron behaviour; return a NEUTRON code (PASS / ABSORB / REFLECT /
+    return NEUTRON.PASS;     //   SCATTER). `fissile({...})` in content/elements/nuclear.js builds a fission hook.
+  },
 }
 ```
 
@@ -142,13 +152,15 @@ Typos in element references are reported in the browser console. The palette's i
 
 In `update`, useful helpers are `sim.type / temp / life / charge` (typed arrays indexed by `i`),
 `sim.spawn(i, ids.water)`, `sim.morph(i, id)`, `sim.erase(i)`, `sim.randomNeighbor(x, y)`,
-`sim.n4(x, y, k)`, `sim.addHeat(i, d)`, `sim.energize(i)`, `sim.explode(x, y, r)`.
+`sim.n4(x, y, k)`, `sim.addHeat(i, d)`, `sim.energize(i)`, `sim.explode(x, y, r)`, `sim.swap(i, j)`,
+`sim.emitNeutrons(i, count)`.
 Import `ids` from `core/registry.js` to refer to elements by name.
 
 ## Adding a category, tool or setting
 
 - **Category:** add `{ id, name, icon }` to `content/categories.js`. For a new element file, also
   import it in `content/elements/index.js`.
+- **Experiment:** add to `content/scenes.js`; `build(p)` paints with `p.rect / p.box / p.disc`.
 - **Tool:** add to `content/tools.js` with a `cell(sim, i)` and/or `area(sim, x, y, r, ctx)` function.
 - **Setting:** add an entry to `SCHEMA` in `ui/settings.js`; it appears in the settings panel
   automatically and is readable as `settings.values.<key>` (the sim gets the same object).

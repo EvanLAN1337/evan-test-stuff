@@ -6,6 +6,7 @@
 import { T, ids, STATE, AIR_DENSITY } from './registry.js';
 import { rnd, rint } from './rng.js';
 import { Air, AIR_SHIFT } from './air.js';
+import { Neutrons } from './neutrons.js';
 
 const { SOLID, POWDER, LIQUID, GAS } = STATE;
 const NX = [-1, 0, 1, -1, 1, -1, 0, 1];
@@ -32,6 +33,7 @@ export class Sim {
     this.charge = new Int8Array(n);
     this.stamp = new Uint8Array(n);
     this.air = new Air(w, h);
+    this.neutrons ??= new Neutrons();
     this.tick = 0;
     this.clear();
   }
@@ -40,6 +42,7 @@ export class Sim {
     this.type.fill(0); this.life.fill(0); this.charge.fill(0); this.stamp.fill(0);
     this.temp.fill(this.settings.ambient);
     this.air.clear();
+    this.neutrons.clear();
   }
 
   // ---------- helpers (also used by element hooks and tools) ----------
@@ -67,6 +70,23 @@ export class Sim {
 
   /** Remove a particle and reset the spot to ambient temperature. */
   erase(i) { this.morph(i, 0); this.temp[i] = this.settings.ambient; }
+
+  /** Swap two cells (both are marked as moved this step). */
+  swap(i, j) {
+    const { type, temp, life, shade, charge, stamp } = this;
+    let v = type[i]; type[i] = type[j]; type[j] = v;
+    v = temp[i]; temp[i] = temp[j]; temp[j] = v;
+    v = life[i]; life[i] = life[j]; life[j] = v;
+    v = shade[i]; shade[i] = shade[j]; shade[j] = v;
+    v = charge[i]; charge[i] = charge[j]; charge[j] = v;
+    stamp[i] = stamp[j] = this.tick;
+  }
+
+  /** Release `count` neutrons from the middle of cell i, in random directions. */
+  emitNeutrons(i, count = 1, slow = 0) {
+    const x = (i % this.w) + 0.5, y = ((i / this.w) | 0) + 0.5;
+    for (let k = 0; k < count; k++) this.neutrons.add(x, y, slow);
+  }
 
   addHeat(i, d) {
     const v = this.temp[i] + d;
@@ -346,6 +366,8 @@ export class Sim {
         }
       }
     }
+
+    this.neutrons.step(this);
 
     if (s.edges === 'void') {
       for (let x = 0; x < W; x++) { this.clearCell(x); this.clearCell((H - 1) * W + x); }

@@ -8,6 +8,12 @@ export const STATE_NAMES = ['solid', 'powder', 'liquid', 'gas'];
 export const AIR_DENSITY = 1.2; // kg/m³. Gases lighter than this rise, heavier ones sink.
 export const SHADES = 8;        // colour variants per element
 
+// How a cell treats a free neutron passing through it (see core/neutrons.js).
+export const NEUTRON = Object.freeze({ PASS: 0, ABSORB: 1, REFLECT: 2, SCATTER: 3, HOOK: 4 });
+const NEUTRON_MODES = { pass: 0, absorb: 1, reflect: 2, moderate: 3 };
+// Default chance per cell crossed that a neutron is absorbed, by state.
+const NEUTRON_STOP = [0.1, 0.07, 0.03, 0];
+
 // Defaults applied per physical state when an element doesn't specify a property.
 const STATE_DEFAULTS = [
   /* solid  */ { conductivity: 0.15, heatCapacity: 1, airDrag: 0, paintChance: 1, glow: true, density: 2000 },
@@ -86,6 +92,12 @@ export function build() {
     trans: new Array(N).fill(null),
     react: new Array(N * N).fill(null),
     hasReact: new Uint8Array(N),
+    nMode: new Uint8Array(N),
+    nChance: new Float32Array(N),
+    nAbsorb: new Float32Array(N),
+    nHook: new Array(N).fill(null),
+    chargeRgb: new Uint8Array(N * 3),
+    hasChargeColor: new Uint8Array(N),
   });
 
   // Pass 2: compile each definition.
@@ -115,6 +127,21 @@ export function build() {
     T.decayTo[n] = ref(d.decayTo, d.id);
     T.decayChance[n] = d.decayChance ?? 1;
     T.hooks[n] = typeof d.update === 'function' ? d.update : null;
+    if (d.chargeColor) { T.chargeRgb.set(hexToRgb(d.chargeColor), n * 3); T.hasChargeColor[n] = 1; }
+
+    // Neutrons: `neutron: 'absorb' | 'reflect' | 'moderate' | 'pass'` or { mode, chance, absorb },
+    // or an `onNeutron(sim, i, slow)` hook returning a NEUTRON code.
+    if (typeof d.onNeutron === 'function') {
+      T.nMode[n] = NEUTRON.HOOK;
+      T.nHook[n] = d.onNeutron;
+    } else {
+      const nd = typeof d.neutron === 'string' ? { mode: d.neutron } : d.neutron ?? {};
+      const mode = NEUTRON_MODES[nd.mode ?? 'absorb'];
+      if (mode === undefined) console.warn(`[powder] "${d.id}" has unknown neutron mode "${nd.mode}"`);
+      T.nMode[n] = mode ?? 1;
+      T.nChance[n] = nd.chance ?? (d.neutron ? 1 : d.indestructible ? 1 : NEUTRON_STOP[s]);
+      T.nAbsorb[n] = nd.absorb ?? 0;
+    }
 
     // Colours: a single hex (shaded by ±variance) or a list of hexes to cycle through.
     const list = Array.isArray(d.color) ? d.color : [d.color ?? '#ff00ff'];

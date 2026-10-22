@@ -35,7 +35,7 @@ export default [
     desc: 'Super-heated gas. Melts nearly everything.',
   },
   {
-    id: 'spark', name: 'Spark', state: 'gas', color: ['#fff6a0', '#ffffff'], density: 1.2,
+    id: 'spark', name: 'Spark', state: 'gas', category: 'electric', color: ['#fff6a0', '#ffffff'], density: 1.2,
     temp: 800, holdTemp: 800, life: [3, 6], flicker: true, conductivity: 0.3, paintChance: 1,
     desc: 'Electricity. Draw it on metal or salt water to send a current.',
     update(sim, i, x, y) {

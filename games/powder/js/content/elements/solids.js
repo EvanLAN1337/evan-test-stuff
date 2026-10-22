@@ -1,4 +1,7 @@
 // Solids never move. See README.md → "Adding an element" for every available property.
+import { ids, NEUTRON } from '../../core/registry.js';
+import { rnd } from '../../core/rng.js';
+
 export default [
   {
     id: 'wall', name: 'Wall', state: 'solid', color: '#5b5e70', variance: 5,
@@ -15,6 +18,7 @@ export default [
     id: 'metal', name: 'Metal', state: 'solid', color: '#9aa3b0', variance: 8, density: 7800,
     conductivity: 0.45, conductive: true,
     transitions: [{ above: 1450, to: 'molten_metal', chance: 0.1 }],
+    reactions: { water: { chance: 0.0004, self: 'rust' }, saltwater: { chance: 0.003, self: 'rust' } },
     desc: 'Conducts heat and electricity very well.',
   },
   {
@@ -43,7 +47,17 @@ export default [
     conductivity: 0.05,
     transitions: [{ above: 180, to: 'fire', chance: 0.06 }],
     reactions: { water: { chance: 0.03, other: 'plant' } },
-    desc: 'Grows by drinking water. Flammable.',
+    onNeutron(sim, i) {
+      if (rnd() < 0.3) sim.morph(i, ids.mutant);
+      return NEUTRON.ABSORB;
+    },
+    desc: 'Grows by drinking water. Flammable. Radiation does strange things to it.',
+  },
+  {
+    id: 'concrete', name: 'Concrete', state: 'solid', color: ['#9a9a93', '#a4a49d', '#8e8e88'], density: 2400,
+    conductivity: 0.08, heatCapacity: 3, neutron: { mode: 'absorb', chance: 0.25 },
+    transitions: [{ above: 1500, to: 'lava', chance: 0.02 }],
+    desc: 'Tough, heat-soaking and good at stopping neutrons. Reactor walls are made of it.',
   },
   {
     id: 'wax', name: 'Wax', state: 'solid', color: '#efe3c2', variance: 6, density: 900,

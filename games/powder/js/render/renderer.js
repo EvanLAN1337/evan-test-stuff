@@ -5,6 +5,7 @@ import { AIR_SHIFT } from '../core/air.js';
 
 const BG = pack(10, 10, 18);
 const SPARK = [255, 250, 190];
+const NEUTRON_FAST = pack(190, 245, 255), NEUTRON_SLOW = pack(200, 150, 255);
 
 // Black-body-ish glow colour for hot solids/liquids, 480°C → 2480°C in 256 steps.
 const GLOW = new Uint8Array(256 * 3);
@@ -60,12 +61,13 @@ export class Renderer {
     if (view === 'heat') this.drawHeat(sim);
     else if (view === 'air') { this.drawNormal(sim, 0.45); this.overlayAir(sim); }
     else this.drawNormal(sim, 1);
+    this.drawNeutrons(sim);
     this.ctx.putImageData(this.img, 0, 0);
   }
 
   drawNormal(sim, dim) {
     const px = this.px, type = sim.type, shade = sim.shade, temp = sim.temp, charge = sim.charge;
-    const colors = T.colors, glow = T.glow;
+    const colors = T.colors, glow = T.glow, hasCC = T.hasChargeColor, cc = T.chargeRgb;
     for (let i = 0, n = sim.n; i < n; i++) {
       const t = type[i];
       let c;
@@ -79,10 +81,20 @@ export class Renderer {
           const g = Math.min(255, ((tc - 480) * 0.1275) | 0) * 3;
           c = mix(c, GLOW[g], GLOW[g + 1], GLOW[g + 2], Math.min(0.9, 0.25 + (tc - 480) / 1600));
         }
-        if (charge[i] > 0) c = mix(c, SPARK[0], SPARK[1], SPARK[2], 0.8);
+        if (charge[i] > 0) {
+          c = hasCC[t] === 1 ? mix(c, cc[t * 3], cc[t * 3 + 1], cc[t * 3 + 2], 0.9) : mix(c, SPARK[0], SPARK[1], SPARK[2], 0.8);
+        }
       }
       if (dim !== 1) c = mix(c, 0, 0, 0, 1 - dim);
       px[i] = c;
+    }
+  }
+
+  // Free neutrons sit on top of everything: pale cyan when fast, violet once slowed by a moderator.
+  drawNeutrons(sim) {
+    const nt = sim.neutrons, px = this.px, W = sim.w;
+    for (let k = 0; k < nt.count; k++) {
+      px[(nt.y[k] | 0) * W + (nt.x[k] | 0)] = nt.slow[k] ? NEUTRON_SLOW : NEUTRON_FAST;
     }
   }
 

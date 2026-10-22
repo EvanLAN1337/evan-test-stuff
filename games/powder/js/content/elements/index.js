@@ -7,8 +7,11 @@ import liquids from './liquids.js';
 import gases from './gases.js';
 import energy from './energy.js';
 import special from './special.js';
+import electric from './electric.js';
+import chemistry from './chemistry.js';
+import nuclear from './nuclear.js';
 
-const FILES = { solids, powders, liquids, gases, energy, special };
+const FILES = { solids, powders, liquids, gases, energy, electric, chemistry, nuclear, special };
 
 for (const [category, list] of Object.entries(FILES)) {
   defineElements(list.map((el) => ({ category, ...el })));
