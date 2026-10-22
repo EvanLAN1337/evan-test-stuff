@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Trace · Lanworks</title>
+  <meta name="description" content="Endless path puzzle: draw one line through the numbers in order that fills every cell.">
+  <meta name="theme-color" content="#07070d">
+  <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../assets/css/game.css">
+  <link rel="stylesheet" href="../../assets/css/puzzle.css">
+  <style>:root { --accent-game: #3ef0ff; }</style>
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="home" href="../../" title="Back to Lanworks">&#9666; <b>Lanworks</b></a>
+    <h1 class="title">Trace</h1>
+    <button type="button" class="tb" id="btn-help">How to play</button>
+  </header>
+
+  <main class="pz">
+    <div class="pz-bar">
+      <div class="seg" id="levels" role="group" aria-label="Difficulty">
+        <button type="button" data-level="easy">Easy</button>
+        <button type="button" data-level="medium">Medium</button>
+        <button type="button" data-level="hard">Hard</button>
+      </div>
+      <div class="clock" aria-live="off"><span id="time">0:00</span><span id="best" class="best"></span></div>
+    </div>
+
+    <div class="board-wrap">
+      <svg id="board" class="board" role="img" aria-label="Puzzle grid"></svg>
+      <div class="win" id="win" hidden><div class="win-card"></div></div>
+    </div>
+
+    <div class="pz-actions">
+      <button type="button" class="tb" id="btn-undo" title="Undo last stroke (Ctrl+Z)">Undo</button>
+      <button type="button" class="tb" id="btn-reset">Clear</button>
+      <span class="spacer"></span>
+      <button type="button" class="tb" id="btn-reveal">Show answer</button>
+      <button type="button" class="tb primary" id="btn-new" title="New puzzle (N)">New puzzle</button>
+    </div>
+    <p class="tip">Start on 1 and drag. Drag back over the line to undo part of it.</p>
+    <noscript><p class="tip">Trace needs JavaScript.</p></noscript>
+  </main>
+
+  <dialog id="help" class="dlg">
+    <form method="dialog">
+      <header class="dlg-head">
+        <h2>How to play Trace</h2>
+        <button class="tb" value="close" aria-label="Close">&#10005;</button>
+      </header>
+      <div class="dlg-body">
+        <p>Draw one continuous line through the grid.</p>
+        <ul>
+          <li>Start at <b>1</b> and pass through the numbers <b>in order</b>, finishing on the highest one.</li>
+          <li>The line must <b>fill every cell</b>, visiting each one exactly once.</li>
+          <li>Move up, down, left or right. The line can't cross the thick <b>walls</b>.</li>
+        </ul>
+        <p><b>Controls:</b> drag from 1 (or from any point on your line) to draw. Drag back to erase. Arrow keys draw too, <kbd>Backspace</kbd> steps back, <kbd>Ctrl+Z</kbd> undoes a stroke, <kbd>N</kbd> starts a new puzzle.</p>
+        <p>Each puzzle has exactly one answer. The clock pauses while the tab is hidden.</p>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

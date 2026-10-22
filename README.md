@@ -10,7 +10,11 @@ assets/css/game.css        dark palette + same fonts, for game pages
 assets/css/site.css        hub styles
 assets/js/catalog.js       ← list of tools/apps/games shown on the hub (edit this to add cards)
 assets/js/site.js          renders the hub from catalog.js
+assets/css/puzzle.css      shared layout for grid puzzle pages
+assets/js/puzzle-kit.js    shared puzzle shell: difficulty, timer, best times, win card
 games/powder/              Powder Lab (falling-sand sandbox)
+games/parcels/             Parcels (split the grid into rectangles); js/gen.js makes the puzzles
+games/trace/               Trace (one path through the numbers, filling every cell); js/gen.js
 404.html                   "page not found"
 start-local.bat            double-click to run the site locally
 ```
